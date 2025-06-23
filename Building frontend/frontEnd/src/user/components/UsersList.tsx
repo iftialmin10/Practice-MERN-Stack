@@ -1,14 +1,15 @@
 import UserItem from "./UserItem";
 import "./UsersList.css";
 
-const UsersList = (props: {
-  items: {
-    id: string;
-    image: string;
-    name: string;
-    places: number;
-  }[];
-}) => {
+export type User = {
+  id: string;
+  image: string;
+  name: string;
+  places: number;
+  placeCount: number;
+};
+
+const UsersList = (props: { items: User[] }) => {
   if (props.items.length === 0) {
     return (
       <div className="center">
@@ -17,7 +18,7 @@ const UsersList = (props: {
     );
   }
   return (
-    <ul>
+    <ul className="user-item">
       {props.items.map((user) => (
         <UserItem
           key={user.id}
