@@ -1,13 +1,6 @@
 import UserItem from "./UserItem";
 import "./UsersList.css";
-
-export type User = {
-  id: string;
-  image: string;
-  name: string;
-  places: number;
-  placeCount: number;
-};
+import type { User } from "../../type";
 
 const UsersList = (props: { items: User[] }) => {
   if (props.items.length === 0) {

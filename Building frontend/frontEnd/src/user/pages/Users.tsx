@@ -1,10 +1,8 @@
 import UsersList from "../components/UsersList";
-import type { User } from "../components/UsersList";
+import type { User } from "../../type";
 
 const Users = () => {
-  const USERS: User[] = [
-    { id: "u1", name: " Ifti", image: "https://flic.kr/p/2gWtxEn", places: 3 },
-  ];
+  const USERS: User[] = [];
   return <UsersList items={USERS} />;
 };
 

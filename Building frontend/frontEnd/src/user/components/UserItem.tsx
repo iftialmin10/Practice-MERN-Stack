@@ -1,9 +1,9 @@
 import "./UserItem.css";
-import type { User } from "./UsersList";
+import type { UserItemProps } from "../../type";
 
-const UserItem = (props: User) => {
+const UserItem = (props: UserItemProps) => {
   return (
-    <ul className="user-item">
+    <li className="user-item">
       <div className="user-item__content">
         <div className="user-item__image">
           <img src={props.image} alt={props.name} />
@@ -15,7 +15,7 @@ const UserItem = (props: User) => {
           </h3>
         </div>
       </div>
-    </ul>
+    </li>
   );
 };
 
