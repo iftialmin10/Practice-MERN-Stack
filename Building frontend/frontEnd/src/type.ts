@@ -11,3 +11,11 @@ export type UserItemProps = {
   name: string;
   placeCount: number;
 };
+
+export type AvatarProps = {
+  image: string;
+  alt: string;
+  className?: string;
+  style?: React.CSSProperties;
+  width?: number | string;
+};
