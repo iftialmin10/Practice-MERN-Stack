@@ -19,3 +19,9 @@ export type AvatarProps = {
   style?: React.CSSProperties;
   width?: number | string;
 };
+
+export type CardProps = {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+};

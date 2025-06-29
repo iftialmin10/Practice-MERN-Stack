@@ -1,8 +1,7 @@
-import React from 'react';
+import "./Card.css";
+import type { CardProps } from "../../../type";
 
-import './Card.css';
-
-const Card = props => {
+const Card = (props: CardProps) => {
   return (
     <div className={`card ${props.className}`} style={props.style}>
       {props.children}
