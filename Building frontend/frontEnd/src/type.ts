@@ -25,3 +25,9 @@ export type CardProps = {
   style?: React.CSSProperties;
   children: React.ReactNode;
 };
+
+export type MainHeaderProps = {
+  children: React.ReactNode;
+};
+
+export type MainNavigationProps = {};
