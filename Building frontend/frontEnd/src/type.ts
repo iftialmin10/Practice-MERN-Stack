@@ -33,3 +33,7 @@ export type MainHeaderProps = {
 export type MainNavigationProps = {};
 
 export type NavLinksProps = {};
+
+export type SideDrawerProps = {
+  children: React.ReactNode;
+};
