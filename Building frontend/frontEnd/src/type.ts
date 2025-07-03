@@ -31,3 +31,5 @@ export type MainHeaderProps = {
 };
 
 export type MainNavigationProps = {};
+
+export type NavLinksProps = {};
