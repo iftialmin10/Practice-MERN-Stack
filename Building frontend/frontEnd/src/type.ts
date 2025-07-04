@@ -37,3 +37,7 @@ export type NavLinksProps = {};
 export type SideDrawerProps = {
   children: React.ReactNode;
 };
+
+export type BackdropsProps = {
+  onClick: () => void;
+};
