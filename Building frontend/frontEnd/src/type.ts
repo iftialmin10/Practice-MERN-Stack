@@ -43,3 +43,32 @@ export type SideDrawerProps = {
 export type BackdropsProps = {
   onClick: () => void;
 };
+
+export type Coordinates = {
+  lat: number;
+  lng: number;
+};
+
+export type Place = {
+  id: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+  address: string;
+  creator: string;
+  location: Coordinates;
+};
+
+export type PlaceListProps = {
+  items: Place[];
+};
+
+export type PlaceItemProps = {
+  id: string;
+  image: string;
+  title: string;
+  address: string;
+  description: string;
+  creatorId: string;
+  coordinates: Coordinates;
+};
