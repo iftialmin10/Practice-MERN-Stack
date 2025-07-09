@@ -72,3 +72,15 @@ export type PlaceItemProps = {
   creatorId: string;
   coordinates: Coordinates;
 };
+
+export type ButtonProps = {
+  children: React.ReactNode;
+  href?: string;
+  to?: string;
+  size?: "small" | "default" | "large";
+  inverse?: boolean;
+  danger?: boolean;
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+  disabled?: boolean;
+};
