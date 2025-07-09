@@ -84,3 +84,17 @@ export type ButtonProps = {
   onClick?: () => void;
   disabled?: boolean;
 };
+
+export type ModalProps = {
+  show: boolean;
+  onCancel: () => void;
+  onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  header?: string;
+  footer?: React.ReactNode;
+  children?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  headerClass?: string;
+  contentClass?: string;
+  footerClass?: string;
+};
