@@ -98,3 +98,17 @@ export type ModalProps = {
   contentClass?: string;
   footerClass?: string;
 };
+
+export type MapProps = {
+  className?: string;
+  style: React.CSSProperties;
+  center: { lat: number; lng: number };
+  zoom: number;
+};
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ol: any;
+  }
+}
