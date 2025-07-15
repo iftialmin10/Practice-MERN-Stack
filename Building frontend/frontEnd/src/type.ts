@@ -112,3 +112,14 @@ declare global {
     ol: any;
   }
 }
+
+export interface InputProps {
+  id?: string;
+  label: string;
+  element: "input" | "textarea";
+  type?: string;
+  placeholder?: string;
+  rows?: number;
+}
+
+export interface NewPlaceProps {}
