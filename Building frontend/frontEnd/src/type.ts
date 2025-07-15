@@ -113,6 +113,8 @@ declare global {
   }
 }
 
+export type ValidatorFn = (value: string) => boolean;
+
 export interface InputProps {
   id?: string;
   label: string;
@@ -120,6 +122,18 @@ export interface InputProps {
   type?: string;
   placeholder?: string;
   rows?: number;
+  errorText: string;
+  validators: ValidatorFn[];
 }
+
+export interface InputState {
+  value: string;
+  isValid: boolean;
+}
+
+export type InputAction = {
+  type: "CHANGE";
+  val: string;
+};
 
 export interface NewPlaceProps {}
