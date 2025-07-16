@@ -123,17 +123,48 @@ export interface InputProps {
   placeholder?: string;
   rows?: number;
   errorText: string;
-  validators: ValidatorFn[];
+  validators: Validator[];
 }
 
 export interface InputState {
   value: string;
   isValid: boolean;
+  isTouched: boolean;
 }
 
-export type InputAction = {
-  type: "CHANGE";
-  val: string;
-};
+export type InputAction =
+  | {
+      type: "CHANGE";
+      val: string;
+      validators: Validator[];
+    }
+  | {
+      type: "TOUCH";
+    };
 
 export interface NewPlaceProps {}
+
+export type ValidatorType =
+  | "REQUIRE"
+  | "MINLENGTH"
+  | "MAXLENGTH"
+  | "MIN"
+  | "MAX"
+  | "EMAIL"
+  | "FILE";
+
+// Step 2: Validator Object Types
+export type Validator =
+  | { type: "REQUIRE" }
+  | { type: "MINLENGTH"; val: number }
+  | { type: "MAXLENGTH"; val: number }
+  | { type: "MIN"; val: number }
+  | { type: "MAX"; val: number }
+  | { type: "EMAIL" }
+  | { type: "FILE" };
+
+// Step 3: Optional - you can type reusable components with
+export type ValidatorFunction = (
+  value: string,
+  validators: Validator[]
+) => boolean;
