@@ -124,6 +124,7 @@ export interface InputProps {
   rows?: number;
   errorText: string;
   validators: Validator[];
+  onInput: (id: string, value: string, isValid: boolean) => void;
 }
 
 export interface InputState {
