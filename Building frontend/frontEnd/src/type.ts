@@ -169,3 +169,17 @@ export type ValidatorFunction = (
   value: string,
   validators: Validator[]
 ) => boolean;
+
+export interface FormState {
+  inputs: {
+    [key: string]: InputState;
+  };
+  isValid: boolean;
+}
+
+export type FormAction = {
+  type: "INPUT_CHANGE";
+  inputId: string;
+  value: string;
+  isValid: boolean;
+};
