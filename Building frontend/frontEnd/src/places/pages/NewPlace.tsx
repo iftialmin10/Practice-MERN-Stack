@@ -9,9 +9,9 @@ import {
 } from "../../shared/components/util/validators";
 import Button from "../../shared/components/FormElements/Button";
 
-const formReducer = (state: FormState, action: FormAction) => {
+const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
-    case "INPUT_CHANGE":
+    case "INPUT_CHANGE": {
       let formIsValid = true;
       for (const inputId in state.inputs) {
         if (inputId === action.inputId) {
@@ -24,25 +24,32 @@ const formReducer = (state: FormState, action: FormAction) => {
         ...state,
         inputs: {
           ...state.inputs,
-          [action.inputId]: { value: action.value, isValid: action.isValid },
+          [action.inputId]: {
+            ...state.inputs[action.inputId],
+            value: action.value,
+            isValid: action.isValid,
+          },
         },
         isValid: formIsValid,
       };
+    }
     default:
       return state;
   }
 };
 
 const NewPlace = () => {
-  const [formState, dispatch] = useReducer<FormState, FormAction>(formReducer, {
+  const [formState, dispatch] = useReducer(formReducer, {
     inputs: {
       title: {
         value: "",
         isValid: false,
+        isTouched: false,
       },
       description: {
         value: "",
         isValid: false,
+        isTouched: false,
       },
     },
 

@@ -116,7 +116,7 @@ declare global {
 export type ValidatorFn = (value: string) => boolean;
 
 export interface InputProps {
-  id?: string;
+  id: string;
   label: string;
   element: "input" | "textarea";
   type?: string;
@@ -142,8 +142,6 @@ export type InputAction =
   | {
       type: "TOUCH";
     };
-
-export interface NewPlaceProps {}
 
 export type ValidatorType =
   | "REQUIRE"
