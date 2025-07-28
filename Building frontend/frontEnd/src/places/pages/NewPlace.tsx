@@ -7,7 +7,7 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/components/util/validators";
 import Button from "../../shared/components/FormElements/Button";
-import "./NewPlace.css";
+import "./PlaceForm.css";
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
@@ -47,6 +47,11 @@ const NewPlace = () => {
         isTouched: false,
       },
       description: {
+        value: "",
+        isValid: false,
+        isTouched: false,
+      },
+      address: {
         value: "",
         isValid: false,
         isTouched: false,
