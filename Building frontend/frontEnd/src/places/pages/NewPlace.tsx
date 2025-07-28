@@ -1,6 +1,5 @@
 import { useCallback, useReducer } from "react";
 
-import "./NewPlace.css";
 import type { FormState, FormAction } from "../../type";
 import Input from "../../shared/components/FormElements/Input";
 import {
@@ -8,6 +7,7 @@ import {
   VALIDATOR_REQUIRE,
 } from "../../shared/components/util/validators";
 import Button from "../../shared/components/FormElements/Button";
+import "./NewPlace.css";
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
