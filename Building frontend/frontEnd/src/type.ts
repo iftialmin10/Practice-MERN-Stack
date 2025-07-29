@@ -125,6 +125,8 @@ export interface InputProps {
   errorText: string;
   validators: Validator[];
   onInput: (id: string, value: string, isValid: boolean) => void;
+  initialValue?: string;
+  initialValid?: boolean;
 }
 
 export interface InputState {
@@ -142,6 +144,11 @@ export type InputAction =
   | {
       type: "TOUCH";
     };
+
+export interface InputValue {
+  value: string;
+  isValid: boolean;
+}
 
 export type ValidatorType =
   | "REQUIRE"
@@ -168,10 +175,12 @@ export type ValidatorFunction = (
   validators: Validator[]
 ) => boolean;
 
+export interface FormInputs {
+  [key: string]: InputValue;
+}
+
 export interface FormState {
-  inputs: {
-    [key: string]: InputState;
-  };
+  inputs: FormInputs;
   isValid: boolean;
 }
 

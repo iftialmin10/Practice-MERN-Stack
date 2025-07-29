@@ -13,17 +13,14 @@ const NewPlace = () => {
       title: {
         value: "",
         isValid: false,
-        isTouched: false,
       },
       description: {
         value: "",
         isValid: false,
-        isTouched: false,
       },
       address: {
         value: "",
         isValid: false,
-        isTouched: false,
       },
     },
     false
