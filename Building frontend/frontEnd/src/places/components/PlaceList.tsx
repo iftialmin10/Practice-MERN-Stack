@@ -3,6 +3,7 @@ import PlaceItem from "./PlaceItem";
 
 import "./PlaceList.css";
 import type { PlaceListProps } from "../../type";
+import Button from "../../shared/components/FormElements/Button";
 
 const PlaceList = (props: PlaceListProps) => {
   if (props.items.length === 0) {
@@ -10,7 +11,7 @@ const PlaceList = (props: PlaceListProps) => {
       <div className="place-list center">
         <Card>
           <h2>No places found. Maybe create one?</h2>
-          <button>Share Places</button>
+          <Button to="/places-new">Share Place</Button>
         </Card>
       </div>
     );
