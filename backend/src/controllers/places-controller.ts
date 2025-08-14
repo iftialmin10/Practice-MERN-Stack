@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import HttpError from "../models/http-error";
 
 type Place = {
-  id?: string;
+  id: string;
   title: string;
   description: string;
   location: { lat: number; lng: number };
@@ -96,12 +96,18 @@ const updatePlace = (req: Request, res: Response, next: NextFunction) => {
 
   const placeId = req.params.pid;
 
-  const updatedPlace = {
-    ...(DUMMY_PLACES.find((p) => p.id === placeId) as Place),
+  const foundPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  if (!foundPlace) {
+    return next(new HttpError("Place not found", 404));
+  }
+
+  const updatedPlace: Place = {
+    ...foundPlace,
+    title,
+    description,
   };
   const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
-  updatedPlace.title = title;
-  updatedPlace.description = description;
 
   DUMMY_PLACES[placeIndex] = updatedPlace;
 
