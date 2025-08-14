@@ -12,7 +12,7 @@ type Place = {
   creator: string;
 };
 
-const DUMMY_PLACES: Place[] = [
+let DUMMY_PLACES: Place[] = [
   {
     id: "p1",
     title: "Empire State Building",
@@ -117,19 +117,8 @@ const updatePlace = (req: Request, res: Response, next: NextFunction) => {
 const deletePlace = (req: Request, res: Response, next: NextFunction) => {
   const placeId = req.params.pid;
 
-  const index = DUMMY_PLACES.findIndex((p) => {
-    return p.id === placeId;
-  });
-  if (!placeId) {
-    next(
-      new HttpError("Could not find this place for the provided place id.", 404)
-    );
-  } else {
-    if (index !== -1) {
-      DUMMY_PLACES.splice(index, 1);
-      res.json({ DUMMY_PLACES });
-    }
-  }
+  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
+  res.status(200).json({ message: "Deleted place." });
 };
 
 export {
