@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import HttpError from "../models/http-error";
 
 type Place = {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   location: { lat: number; lng: number };
@@ -85,4 +85,51 @@ const createPlace = (req: Request, res: Response, next: NextFunction) => {
   res.status(201).json({ place: createdPlace });
 };
 
-export { getPlaceByUserId, getPlaceById, createPlace };
+const updatePlace = (req: Request, res: Response, next: NextFunction) => {
+  const {
+    title,
+    description,
+  }: {
+    title: string;
+    description: string;
+  } = req.body;
+
+  const placeId = req.params.pid;
+
+  const updatedPlace = {
+    ...(DUMMY_PLACES.find((p) => p.id === placeId) as Place),
+  };
+  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+  updatedPlace.title = title;
+  updatedPlace.description = description;
+
+  DUMMY_PLACES[placeIndex] = updatedPlace;
+
+  res.status(200).json({ place: updatedPlace });
+};
+
+const deletePlace = (req: Request, res: Response, next: NextFunction) => {
+  const placeId = req.params.pid;
+
+  const index = DUMMY_PLACES.findIndex((p) => {
+    return p.id === placeId;
+  });
+  if (!placeId) {
+    next(
+      new HttpError("Could not find this place for the provided place id.", 404)
+    );
+  } else {
+    if (index !== -1) {
+      DUMMY_PLACES.splice(index, 1);
+      res.json({ DUMMY_PLACES });
+    }
+  }
+};
+
+export {
+  getPlaceByUserId,
+  getPlaceById,
+  createPlace,
+  deletePlace,
+  updatePlace,
+};
