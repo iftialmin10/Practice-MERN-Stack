@@ -1,8 +1,18 @@
 import { Request, Response, NextFunction } from "express";
+import { v4 as uuidv4 } from "uuid";
 
 import HttpError from "../models/http-error";
 
-const DUMMY_PLACES = [
+type Place = {
+  id: string;
+  title: string;
+  description: string;
+  location: { lat: number; lng: number };
+  address: string;
+  creator: string;
+};
+
+const DUMMY_PLACES: Place[] = [
   {
     id: "p1",
     title: "Empire State Building",
@@ -16,11 +26,7 @@ const DUMMY_PLACES = [
   },
 ];
 
-export const getPlaceById = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getPlaceById = (req: Request, res: Response, next: NextFunction) => {
   const placeId = req.params.pid; //{pid:"p1"}
   const place = DUMMY_PLACES.find((p) => {
     return p.id === placeId;
@@ -33,11 +39,7 @@ export const getPlaceById = (
   }
 };
 
-export const getPlaceByUserId = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getPlaceByUserId = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.params.uid;
 
   const place = DUMMY_PLACES.find((p) => {
@@ -52,3 +54,35 @@ export const getPlaceByUserId = (
     res.json({ place });
   }
 };
+
+const createPlace = (req: Request, res: Response, next: NextFunction) => {
+  const {
+    title,
+    description,
+    coordinates,
+    address,
+    creator,
+  }: {
+    title: string;
+    description: string;
+    coordinates: { lat: number; lng: number };
+    address: string;
+    creator: string;
+  } = req.body;
+  // const title = req.body.title
+
+  const createdPlace = {
+    id: uuidv4(),
+    title,
+    description,
+    location: coordinates,
+    address,
+    creator,
+  };
+
+  DUMMY_PLACES.push(createdPlace);
+
+  res.status(201).json({ place: createdPlace });
+};
+
+export { getPlaceByUserId, getPlaceById, createPlace };
