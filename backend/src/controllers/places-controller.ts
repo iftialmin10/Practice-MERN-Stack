@@ -39,19 +39,17 @@ const getPlaceById = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getPlaceByUserId = (req: Request, res: Response, next: NextFunction) => {
+const getPlacesByUserId = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.params.uid;
 
-  const place = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
     return p.creator === userId;
   });
 
-  if (!place) {
-    next(
-      new HttpError("Could not find a place for the provider user id.", 404)
-    );
+  if (!places || places.length === 0) {
+    next(new HttpError("Could not find places for the provider user id.", 404));
   } else {
-    res.json({ place });
+    res.json({ places });
   }
 };
 
@@ -122,7 +120,7 @@ const deletePlace = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export {
-  getPlaceByUserId,
+  getPlacesByUserId,
   getPlaceById,
   createPlace,
   deletePlace,
