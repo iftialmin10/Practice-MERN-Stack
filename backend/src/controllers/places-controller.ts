@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4 } from "uuid";
+import { validationResult } from "express-validator";
 
 import HttpError from "../models/http-error";
+import getCoordsForAddress from "../util/location";
 
 type Place = {
   id: string;
@@ -53,21 +55,33 @@ const getPlacesByUserId = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const createPlace = (req: Request, res: Response, next: NextFunction) => {
+const createPlace = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
   const {
     title,
     description,
-    coordinates,
     address,
     creator,
   }: {
     title: string;
     description: string;
-    coordinates: { lat: number; lng: number };
     address: string;
     creator: string;
   } = req.body;
   // const title = req.body.title
+
+  let coordinates;
+  try {
+    coordinates = await getCoordsForAddress(address);
+  } catch (error) {
+    return next(error);
+  }
 
   const createdPlace = {
     id: uuidv4(),
@@ -84,6 +98,11 @@ const createPlace = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const updatePlace = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+  }
+
   const {
     title,
     description,
@@ -114,6 +133,10 @@ const updatePlace = (req: Request, res: Response, next: NextFunction) => {
 
 const deletePlace = (req: Request, res: Response, next: NextFunction) => {
   const placeId = req.params.pid;
+
+  if (!DUMMY_PLACES.find((p) => p.id === placeId)) {
+    throw new HttpError("Could not find a place for that id.", 404);
+  }
 
   DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
   res.status(200).json({ message: "Deleted place." });
