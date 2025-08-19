@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
 import placesRoute from "./routes/places-routes";
 import usersRoute from "./routes/users-routes";
@@ -30,6 +31,13 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || "An unknown error occurred" });
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
+mongoose
+  .connect(
+    "mongodb+srv://iftiPlaceApi:PlAceAdminpIa@cluster0.hi8lrtj.mongodb.net/places?retryWrites=true&w=majority&appName=Cluster0"
+  )
+  .then(() => {
+    app.listen(5000, () => {
+      console.log("Server is running on port 5000");
+    });
+  })
+  .catch((err) => console.log(err));
