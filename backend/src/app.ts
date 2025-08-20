@@ -32,9 +32,7 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://iftiPlaceApi:PlAceAdminpIa@cluster0.hi8lrtj.mongodb.net/places?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(`${process.env.DB_CONNECTION_STRING}`)
   .then(() => {
     app.listen(5000, () => {
       console.log("Server is running on port 5000");

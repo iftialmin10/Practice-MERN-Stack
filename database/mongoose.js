@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 const Product = require("./models/product");
 
 mongoose
-  .connect(
-    "mongodb+srv://iftiPlaceApi:PlAceAdminpIa@cluster0.hi8lrtj.mongodb.net/productTest?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect()
   .then(() => {
     console.log("Connected to MongoDB");
   })
