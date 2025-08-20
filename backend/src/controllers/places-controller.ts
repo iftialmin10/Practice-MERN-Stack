@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
+import mongoose from "mongoose";
 
 import HttpError from "../models/http-error";
 import getCoordsForAddress from "../util/location";
 import { Place } from "../models/place";
 
-type Place = {
+// Local dummy-place shape (rename to avoid colliding with the Mongoose `Place` model)
+type DummyPlace = {
   id: string;
   title: string;
   description: string;
@@ -15,7 +17,7 @@ type Place = {
   creator: string;
 };
 
-let DUMMY_PLACES: Place[] = [
+let DUMMY_PLACES: DummyPlace[] = [
   {
     id: "p1",
     title: "Empire State Building",
@@ -29,30 +31,70 @@ let DUMMY_PLACES: Place[] = [
   },
 ];
 
-const getPlaceById = (req: Request, res: Response, next: NextFunction) => {
-  const placeId = req.params.pid; //{pid:"p1"}
-  const place = DUMMY_PLACES.find((p) => {
-    return p.id === placeId;
-  });
+const getPlaceById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const placeId = req.params.pid;
+
+  let place;
+
+  // Check if provided ID is valid MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(placeId!)) {
+    const error = new HttpError("Invalid place ID format.", 400);
+    return next(error);
+  }
+
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find a place",
+      500
+    );
+    return next(error);
+  }
 
   if (!place) {
-    throw new HttpError("Could not find a place for the provider id.", 404);
-  } else {
-    res.json({ place }); // => {place} => {place: place}
+    const error = new HttpError(
+      "Could not find a place for the provider id.",
+      404
+    );
+    return next(error);
   }
+  res.json({ place: place.toObject({ getters: true }) }); // => {place} => {place: place}
 };
 
-const getPlacesByUserId = (req: Request, res: Response, next: NextFunction) => {
+const getPlacesByUserId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.params.uid;
 
-  const places = DUMMY_PLACES.filter((p) => {
-    return p.creator === userId;
-  });
+  if (!userId) {
+    return next(new HttpError("User ID is required.", 400));
+  }
+
+  let places;
+
+  try {
+    places = await Place.find({ creator: userId });
+  } catch (err) {
+    return next(
+      new HttpError("Fetching places failed, please try again later.", 500)
+    );
+  }
 
   if (!places || places.length === 0) {
-    next(new HttpError("Could not find places for the provider user id.", 404));
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
   } else {
-    res.json({ places });
+    res.json({
+      places: places.map((place) => place.toObject({ getters: true })),
+    });
   }
 };
 
@@ -129,7 +171,7 @@ const updatePlace = (req: Request, res: Response, next: NextFunction) => {
     return next(new HttpError("Place not found", 404));
   }
 
-  const updatedPlace: Place = {
+  const updatedPlace: DummyPlace = {
     ...foundPlace,
     title,
     description,

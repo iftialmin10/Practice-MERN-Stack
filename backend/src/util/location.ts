@@ -7,8 +7,6 @@ dotenv.config();
 
 const apiKey = process.env.API_KEY;
 
-console.log(apiKey);
-
 async function getCoordsForAddress(address: string) {
   const response = axios.get(
     `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
