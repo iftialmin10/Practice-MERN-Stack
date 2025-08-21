@@ -1,8 +1,20 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-const placeSchema = new Schema({
+export interface IPlace extends Document {
+  title: string;
+  description: string;
+  image: string;
+  address: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  creator: string;
+}
+
+const placeSchema = new Schema<IPlace>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   image: { type: String, required: true },
@@ -14,4 +26,6 @@ const placeSchema = new Schema({
   creator: { type: String, required: true },
 });
 
-export const Place = mongoose.model("Place", placeSchema);
+const Place: Model<IPlace> = mongoose.model<IPlace>("Place", placeSchema);
+
+export default Place;

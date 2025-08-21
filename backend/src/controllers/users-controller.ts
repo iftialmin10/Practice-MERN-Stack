@@ -3,8 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
 
 import HttpError from "../models/http-error";
+import User from "../models/user";
 
-interface User {
+interface IUser {
   id: string;
   name: string;
   email: string;
@@ -22,7 +23,7 @@ interface LoginBody {
   password: string;
 }
 
-const DUMMY_USERS: User[] = [
+const DUMMY_USERS: IUser[] = [
   {
     id: "u1",
     name: "IFTI",
@@ -35,29 +36,46 @@ const getUsers = (req: Request, res: Response, next: NextFunction) => {
   res.json({ users: DUMMY_USERS });
 };
 
-const signup = (req: Request, res: Response, next: NextFunction) => {
+const signup = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, places } = req.body;
 
-  const hasUser = DUMMY_USERS.find((u) => u.email === email);
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new HttpError("Signing up failed, Please try later", 500);
+    return next(error);
+  }
 
-  const createdUser = {
-    id: uuidv4(),
+  if (existingUser) {
+    const error = new HttpError("User already exists", 422);
+    return next(error);
+  }
+
+  const createdUser = new User({
     name,
     email,
+    image: "https://example.com/image.png",
     password,
-  };
+    places: [], // Initialize with empty places array
+  });
 
-  if (!hasUser) {
-    DUMMY_USERS.push(createdUser);
-    res.status(201).json({ user: createdUser });
-  } else {
-    res.status(401).json({ message: "User already exist" });
+  try {
+    await createdUser.save();
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again.", 500);
+    return next(error);
   }
+
+  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
 };
 
 const login = (req: Request, res: Response, next: NextFunction) => {

@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 import HttpError from "../models/http-error";
 import getCoordsForAddress from "../util/location";
-import { Place } from "../models/place";
+import Place from "../models/place";
 
 // Local dummy-place shape (rename to avoid colliding with the Mongoose `Place` model)
 type DummyPlace = {
@@ -152,7 +152,9 @@ const createPlace = async (req: Request, res: Response, next: NextFunction) => {
 const updatePlace = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
   }
 
   const {
