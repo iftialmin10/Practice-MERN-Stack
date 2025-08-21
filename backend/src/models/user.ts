@@ -7,7 +7,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   image: string;
-  places: string[];
+  places: mongoose.Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -15,7 +15,9 @@ const userSchema = new Schema<IUser>({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true, minlength: 6 },
   image: { type: String, required: true },
-  places: [{ type: String, required: true }],
+  places: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Place", required: false },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);

@@ -1,17 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
+import mongoose from "mongoose";
 
 import HttpError from "../models/http-error";
-import User from "../models/user";
+import User, { IUser } from "../models/user";
 
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-}
+// Remove the local IUser interface as we're using the one from the model
 
+// Request body interfaces for type safety
 interface SignupBody {
   name: string;
   email: string;
@@ -23,17 +19,22 @@ interface LoginBody {
   password: string;
 }
 
-const DUMMY_USERS: IUser[] = [
-  {
-    id: "u1",
-    name: "IFTI",
-    email: "test@test.com",
-    password: "testers",
-  },
-];
+const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+  let users;
 
-const getUsers = (req: Request, res: Response, next: NextFunction) => {
-  res.json({ users: DUMMY_USERS });
+  try {
+    users = await User.find({}, "-password");
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching users failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
+  res.json({
+    users: users.map((user) => user.toObject({ getters: true })),
+  });
 };
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -45,7 +46,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {

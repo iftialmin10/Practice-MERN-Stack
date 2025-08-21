@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { ref } from "process";
 
 // const Schema = mongoose.Schema;
 
@@ -23,7 +24,11 @@ const placeSchema = new Schema<IPlace>({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
   },
-  creator: { type: String, required: true },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
 });
 
 const Place: Model<IPlace> = mongoose.model<IPlace>("Place", placeSchema);
