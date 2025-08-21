@@ -1,23 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import mongoose from "mongoose";
 
 import HttpError from "../models/http-error";
-import User, { IUser } from "../models/user";
-
-// Remove the local IUser interface as we're using the one from the model
-
-// Request body interfaces for type safety
-interface SignupBody {
-  name: string;
-  email: string;
-  password: string;
-}
-
-interface LoginBody {
-  email: string;
-  password: string;
-}
+import User from "../models/user";
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   let users;
@@ -66,7 +51,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     email,
     image: "https://example.com/image.png",
     password,
-    places: [], // Initialize with empty places array
+    places: [],
   });
 
   try {

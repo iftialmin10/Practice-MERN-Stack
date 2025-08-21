@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-// const Schema = mongoose.Schema;
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -16,7 +15,7 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true, minlength: 6 },
   image: { type: String, required: true },
   places: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Place", required: false },
+    { type: mongoose.Schema.Types.ObjectId, required: false, ref: "Place" },
   ],
 });
 

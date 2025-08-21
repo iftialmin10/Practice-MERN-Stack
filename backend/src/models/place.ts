@@ -1,8 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { ref } from "process";
 
-// const Schema = mongoose.Schema;
-
 export interface IPlace extends Document {
   title: string;
   description: string;
