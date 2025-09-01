@@ -51,7 +51,7 @@ export type Coordinates = {
 
 export type Place = {
   id: string;
-  imageUrl: string;
+  image: string;
   title: string;
   description: string;
   address: string;
