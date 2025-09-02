@@ -49,7 +49,8 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   const createdUser = new User({
     name,
     email,
-    image: "https://example.com/image.png",
+    image:
+      "https://cdn.pixabay.com/photo/2017/06/18/01/34/women-2414310_1280.png",
     password,
     places: [],
   });
@@ -83,7 +84,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
-  res.json({ message: "Logged in!" });
+  res.json({
+    message: "Logged in!",
+    user: existingUser.toObject({ getters: true }),
+  });
 };
 
 export { getUsers, signup, login };
