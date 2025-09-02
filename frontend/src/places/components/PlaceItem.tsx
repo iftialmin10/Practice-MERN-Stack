@@ -88,7 +88,6 @@ const PlaceItem = (props: PlaceItemProps) => {
             )}
             {auth.isLoggedIn && (
               <Button danger onClick={showDeleteWarningHandler}>
-                {" "}
                 DELETE
               </Button>
             )}
