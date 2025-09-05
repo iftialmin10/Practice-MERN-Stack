@@ -1,5 +1,6 @@
+import fs from "fs";
+
 import { Request, Response, NextFunction } from "express";
-import { v4 as uuidv4 } from "uuid";
 import { validationResult } from "express-validator";
 import mongoose from "mongoose";
 
@@ -112,8 +113,7 @@ const createPlace = async (req: Request, res: Response, next: NextFunction) => {
     description,
     location: coordinates,
     address,
-    image:
-      "https://media.architecturaldigest.com/photos/66b397865c4b67e0f3a7d9ac/16:9/w_960,c_limit/GettyImages-584714362.jpg",
+    image: req.file?.path,
     creator,
   });
 
@@ -222,6 +222,8 @@ const deletePlace = async (req: Request, res: Response, next: NextFunction) => {
     return next(new HttpError("Could not find place for this id", 404));
   }
 
+  const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -247,6 +249,9 @@ const deletePlace = async (req: Request, res: Response, next: NextFunction) => {
     );
     return next(error);
   }
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+  });
 
   res.status(200).json({ message: "Deleted place." });
 };
