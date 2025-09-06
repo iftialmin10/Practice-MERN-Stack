@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcrypt-ts";
 
 import HttpError from "../models/http-error";
 import User from "../models/user";
@@ -46,11 +47,19 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    const error = new HttpError("Could not create user, please try again", 500);
+    return next(error);
+  }
+
   const createdUser = new User({
     name,
     email,
     image: req.file?.path,
-    password,
+    password: hashedPassword,
     places: [],
   });
 
