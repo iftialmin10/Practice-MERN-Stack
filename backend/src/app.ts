@@ -27,7 +27,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use("/api/places", placesRoute); // => /api/places/...
+app.use("/api/places", placesRoute);
 
 app.use("/api/users", usersRoute);
 
@@ -37,7 +37,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   throw error;
 });
 
-// special middleware or error handling middleware bcz (4 parameter)
 app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   if (req.file) {
     fs.unlink(req.file.path, (err) => {
@@ -53,8 +52,12 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || "An unknown error occurred" });
 });
 
+console.log(process.env.DB_NAME);
+
 mongoose
-  .connect(`${process.env.DB_CONNECTION_STRING}`)
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.hi8lrtj.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`
+  )
   .then(() => {
     app.listen(5000, () => {
       console.log("Server is running on port 5000");

@@ -1,4 +1,4 @@
-import multer from "multer";
+import multer, { FileFilterCallback } from "multer";
 import { v4 as uuidv4 } from "uuid";
 
 const MIME_TYPE_MAP = {
@@ -8,7 +8,7 @@ const MIME_TYPE_MAP = {
 } as const;
 
 const fileUpload = multer({
-  limits: { fileSize: 500000 }, // 500 KB limit
+  limits: { fileSize: 500000 },
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, "uploads/images");
@@ -19,12 +19,14 @@ const fileUpload = multer({
       cb(null, uuidv4() + "." + ext);
     },
   }),
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req, file, cb: FileFilterCallback) => {
     const isValid =
       !!MIME_TYPE_MAP[file.mimetype as keyof typeof MIME_TYPE_MAP];
-    let error = isValid ? null : new Error("Invalid mime type!");
-
-    cb(error, isValid);
+    if (isValid) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid mime type!") as unknown as null, false);
+    }
   },
 });
 

@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { ref } from "process";
 
 export interface IPlace extends Document {
   title: string;

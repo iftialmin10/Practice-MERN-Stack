@@ -40,7 +40,7 @@ const getPlaceById = async (
     );
     return next(error);
   }
-  res.json({ place: place.toObject({ getters: true }) }); // => {place} => {place: place}
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
 const getPlacesByUserId = async (
@@ -54,7 +54,6 @@ const getPlacesByUserId = async (
     return next(new HttpError("User ID is required.", 400));
   }
 
-  // let places;
   let userWithPlaces;
 
   try {
@@ -67,7 +66,6 @@ const getPlacesByUserId = async (
     );
   }
 
-  // if (!places || places.length === 0) {}
   if (!userWithPlaces || userWithPlaces.places.length === 0) {
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
@@ -93,12 +91,10 @@ const createPlace = async (req: Request, res: Response, next: NextFunction) => {
     title,
     description,
     address,
-    creator,
   }: {
     title: string;
     description: string;
     address: string;
-    creator: string;
   } = req.body;
 
   let coordinates;
@@ -114,12 +110,12 @@ const createPlace = async (req: Request, res: Response, next: NextFunction) => {
     location: coordinates,
     address,
     image: req.file?.path,
-    creator,
+    creator: req.userData?.userId,
   });
 
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData!.userId);
   } catch (err) {
     const error = new HttpError("Creating place failed, please try again", 500);
     return next(error);
@@ -133,12 +129,12 @@ const createPlace = async (req: Request, res: Response, next: NextFunction) => {
   console.log(user);
 
   try {
-    const sess = await mongoose.startSession(); // set up a session for transaction
-    sess.startTransaction(); // start the transaction
-    await createdPlace.save({ session: sess }); // save the place in the session
-    user.places.push(createdPlace._id as mongoose.Types.ObjectId); // add the place to the user's places
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace._id as mongoose.Types.ObjectId);
     await user.save({ session: sess });
-    await sess.commitTransaction(); // commit the transaction
+    await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
       "Creating place failed, please try again.",
@@ -183,6 +179,10 @@ const updatePlace = async (req: Request, res: Response, next: NextFunction) => {
     return next(new HttpError("Place not found", 404));
   }
 
+  if (place.creator.toString() !== req.userData!.userId) {
+    const error = new HttpError("You are not allowed to edit this place.", 401);
+    return next(error);
+  }
   place.title = title;
   place.description = description;
 
@@ -208,7 +208,6 @@ const deletePlace = async (req: Request, res: Response, next: NextFunction) => {
 
   let place;
   try {
-    // Populate the creator field to get access to the user document
     place = await Place.findById(placeId).populate("creator");
   } catch (err) {
     const error = new HttpError(
@@ -222,16 +221,22 @@ const deletePlace = async (req: Request, res: Response, next: NextFunction) => {
     return next(new HttpError("Could not find place for this id", 404));
   }
 
+  if (place.creator.toString() !== req.userData!.userId) {
+    const error = new HttpError(
+      "You are not allowed to delete this place.",
+      401
+    );
+    return next(error);
+  }
+
   const imagePath = place.image;
 
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
 
-    // Remove the place
     await place.deleteOne({ session: sess });
 
-    // Get the user and update their places array
     const user = await User.findById(place.creator);
     if (!user) {
       await sess.abortTransaction();

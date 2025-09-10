@@ -5,13 +5,13 @@ import HttpError from "../models/http-error";
 
 dotenv.config();
 
-const apiKey = process.env.API_KEY;
+const API_KEY = process.env.API_KEY;
 
 async function getCoordsForAddress(address: string) {
   const response = axios.get(
     `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
       address
-    )}&key=${apiKey}&language=en&pretty=1`
+    )}&key=${API_KEY}&language=en&pretty=1`
   );
 
   const data = (await response).data;

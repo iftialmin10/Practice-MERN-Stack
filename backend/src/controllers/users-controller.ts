@@ -1,9 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
-import bcrypt from "bcrypt-ts";
+import * as bcrypt from "bcrypt-ts";
+import jwt from "jsonwebtoken";
 
 import HttpError from "../models/http-error";
 import User from "../models/user";
+
+const jwtSecret = process.env.JWT_KEY;
+if (!jwtSecret) {
+  throw new Error("JWT_KEY is not defined in the environment variables.");
+}
 
 const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   let users;
@@ -49,8 +55,9 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
   let hashedPassword;
   try {
-    hashedPassword = await bcrypt.hash(password, 12);
+    hashedPassword = await bcrypt.hash(password, 8);
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Could not create user, please try again", 500);
     return next(error);
   }
@@ -66,11 +73,28 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await createdUser.save();
   } catch (err) {
+    const error = new HttpError(
+      "Signing up failed to saving the user, please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      jwtSecret,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
     const error = new HttpError("Signing up failed, please try again.", 500);
     return next(error);
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -87,7 +111,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   if (!existingUser) {
     const error = new HttpError(
       "Invalid credentials, could not log you in.",
-      401
+      403
     );
     return next(error);
   }
@@ -111,9 +135,23 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     );
   }
 
+  let token;
+
+  try {
+    token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      jwtSecret,
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    const error = new HttpError("Logging in failed , please try again.", 500);
+    return next(error);
+  }
+
   res.json({
-    message: "Logged in!",
-    user: existingUser.toObject({ getters: true }),
+    userId: existingUser.id,
+    email: existingUser.email,
+    token: token,
   });
 };
 
