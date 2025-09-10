@@ -5,6 +5,8 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
+const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Users = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedUsers, setLoadedUsers] = useState();
@@ -12,9 +14,7 @@ const Users = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const responseData = await sendRequest(
-          "http://localhost:5000/api/users"
-        );
+        const responseData = await sendRequest(API_BACKEND_URL + "/users");
 
         setLoadedUsers(responseData.users);
       } catch (err) {}

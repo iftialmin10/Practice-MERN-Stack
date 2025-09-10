@@ -15,6 +15,8 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import "./PlaceForm.css";
 
+const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const UpdatePlace = () => {
   const auth = useContext(AuthContext);
   const { sendRequest, error, isLoading, clearError } = useHttpClient();
@@ -40,7 +42,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          `${API_BACKEND_URL}/places/${placeId}`
         );
         setLoadedPlace(responseData.place);
 
@@ -67,7 +69,7 @@ const UpdatePlace = () => {
 
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`,
+        `${API_BACKEND_URL}/places/${placeId}`,
         "PATCH",
         JSON.stringify({
           title: formState.inputs.title.value,
@@ -75,6 +77,7 @@ const UpdatePlace = () => {
         }),
         {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
         }
       );
       navigate("/" + auth.userId + "/places");

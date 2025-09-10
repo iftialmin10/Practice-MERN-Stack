@@ -15,6 +15,8 @@ import "./PlaceForm.css";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 
+const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const NewPlace = () => {
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -48,10 +50,11 @@ const NewPlace = () => {
       formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("address", formState.inputs.address.value);
-      formData.append("creator", auth.userId);
       formData.append("image", formState.inputs.image.value);
 
-      await sendRequest("http://localhost:5000/api/places", "POST", formData);
+      await sendRequest(API_BACKEND_URL + "/places", "POST", formData, {
+        Authorization: "Bearer " + auth.token,
+      });
 
       navigate("/");
     } catch (err) {}

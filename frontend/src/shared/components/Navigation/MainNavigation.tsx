@@ -36,7 +36,7 @@ const MainNavigation = (props: MainNavigationProps) => {
         </button>
 
         <h1 className="main-navigation__title">
-          <Link to="/">YourPlace</Link>
+          <Link to="/">Add Your Visited Places</Link>
         </h1>
         <nav className="main-navigation__header-nav">
           <NavLinks />

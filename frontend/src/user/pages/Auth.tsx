@@ -17,6 +17,8 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./Auth.css";
 
+const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 interface FormInput {
   value: string;
   isValid: boolean;
@@ -103,7 +105,7 @@ const Auth: React.FC = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          API_BACKEND_URL + "/users/login",
           "POST",
           JSON.stringify({
             email: formState.inputs.email.value,
@@ -113,7 +115,7 @@ const Auth: React.FC = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {}
     } else {
       try {
@@ -124,12 +126,12 @@ const Auth: React.FC = () => {
         formData.append("image", formState.inputs.image.value);
 
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          API_BACKEND_URL + "/users/signup",
           "POST",
           formData
         );
 
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (err) {}
     }
   };

@@ -11,6 +11,9 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
+const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const API_ASSET_URL = import.meta.env.VITE_ASSET_URL;
+
 const PlaceItem = (props: PlaceItemProps) => {
   const { sendRequest, error, clearError, isLoading } = useHttpClient();
   const auth = useContext(AuthContext);
@@ -34,8 +37,12 @@ const PlaceItem = (props: PlaceItemProps) => {
 
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
-        "DELETE"
+        API_BACKEND_URL + `/places/${props.id}`,
+        "DELETE",
+        null,
+        {
+          Authorization: "Bearer " + auth.token,
+        }
       );
       props.onDelete(props.id);
     } catch (err) {}
@@ -85,10 +92,7 @@ const PlaceItem = (props: PlaceItemProps) => {
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img
-              src={`http://localhost:5000/${props.image}`}
-              alt={props.title}
-            />
+            <img src={`${API_ASSET_URL}/${props.image}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>

@@ -5,6 +5,8 @@ import "./UserItem.css";
 import Avatar from "../../shared/components/UIElements/Avatar";
 import Card from "../../shared/components/UIElements/Card";
 
+const API_ASSET_URL = import.meta.env.VITE_ASSET_URL;
+
 const UserItem = (props: UserItemProps) => {
   return (
     <li className="user-item">
@@ -12,7 +14,7 @@ const UserItem = (props: UserItemProps) => {
         <Link to={`/${props.id}/places`}>
           <div className="user-item__image">
             <Avatar
-              image={`http://localhost:5000/${props.image}`}
+              image={`${API_ASSET_URL}/${props.image}`}
               alt={props.name}
             />
           </div>
