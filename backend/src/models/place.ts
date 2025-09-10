@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 export interface IPlace extends Document {
   title: string;
@@ -9,7 +9,7 @@ export interface IPlace extends Document {
     lat: number;
     lng: number;
   };
-  creator: string;
+  creator: Types.ObjectId;
 }
 
 const placeSchema = new Schema<IPlace>({
